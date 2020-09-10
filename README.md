@@ -1,6 +1,6 @@
 # bcstreamcrossings
 
-Generate potential transportation/stream crossing locations in British Columbia.
+Generate potential locations of transportation-stream crossings in British Columbia
 
 In addition to running the simple intersection of roads/railways and stream linework, this tool:
 - removes duplicate crossings as best as possible (road data comes from several sources)
