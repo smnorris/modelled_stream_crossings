@@ -13,6 +13,7 @@ CREATE TABLE fish_passage.preliminary_stream_crossings
   downstream_route_measure double precision,
   wscode_ltree ltree,
   localcode_ltree ltree,
+  edge_type integer,
   watershed_group_code character varying(4),
   geom geometry(PointZM, 3005)
 );

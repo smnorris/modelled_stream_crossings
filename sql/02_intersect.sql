@@ -122,6 +122,7 @@ intersections AS
     s.wscode_ltree,
     s.localcode_ltree,
     s.watershed_group_code,
+    s.edge_type,
     -- create intersections, dump any collections/mulitpart features to singlepart
     (ST_Dump(
       ST_Intersection(
@@ -172,6 +173,7 @@ INSERT INTO fish_passage.preliminary_stream_crossings
   downstream_route_measure,
   wscode_ltree,
   localcode_ltree,
+  edge_type,
   watershed_group_code,
   geom)
 SELECT
@@ -185,6 +187,7 @@ SELECT
   downstream_route_measure_pt as downstream_route_measure,
   wscode_ltree,
   localcode_ltree,
+  edge_type,
   watershed_group_code,
   (ST_Dump(ST_LocateAlong(geom_s, downstream_route_measure_pt))).geom as geom
 FROM intersections_measures;
