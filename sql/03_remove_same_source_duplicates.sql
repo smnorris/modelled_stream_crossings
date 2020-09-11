@@ -100,3 +100,15 @@ WHERE t1.railway_track_id IS NOT NULL
 AND nn.dist < 10
 AND t1.preliminary_crossing_id < nn.preliminary_crossing_id
 );
+
+-- also, remove railway tunnels
+DELETE FROM fish_passage.preliminary_stream_crossings
+WHERE preliminary_crossing_id IN
+(
+  SELECT
+    p.preliminary_crossing_id
+  FROM fish_passage.preliminary_stream_crossings p
+  INNER JOIN whse_basemapping.gba_railway_structure_lines_sp r
+  ON ST_Intersects(ST_Buffer(p.geom, 5), r.geom)
+  WHERE r.structure_type = 'Tunnel'
+);
