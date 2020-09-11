@@ -24,7 +24,7 @@ All road and railway features as defined by these queries are used to generate s
 
 ### Stream features
 
-Streams are from the [BC Freshwater Atlas stream network](https://github.com/smnorris/fwapg)
+Streams are from the [BC Freshwater Atlas](https://catalogue.data.gov.bc.ca/dataset/freshwater-atlas-stream-network)
 
 ## Requirements
 
