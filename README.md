@@ -2,11 +2,11 @@
 
 Generate potential locations of road/railway stream crossings and associated structures in British Columbia.
 
-In addition to generating the intersection points of roads/railways and streams, this tool:
+In addition to generating the intersection points of roads/railways and streams, this tool attempts to:
 
-- removes duplicate crossings as best as possible
-- identifies crossings that are likely to be bridges/open bottom structures
-- maintains a consistent unique identifier value for each output crossing
+- remove duplicate crossings
+- identify crossings that are likely to be bridges/open bottom structures
+- maintain a consistent unique identifier value (`crossing_id`) for distinct crossing locations
 
 ## Data sources
 
