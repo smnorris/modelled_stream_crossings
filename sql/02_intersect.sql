@@ -33,7 +33,7 @@ roads AS
   ON ST_Intersects(r.geom, w.geom)
   WHERE transport_line_type_code NOT IN ('F','FP','FR','T','TD','TR','TS','RP','RWA') -- exclude trails and ferry/water
   AND transport_line_surface_code != 'D'                                              -- exclude decomissioned roads
-  AND transport_line_structure_code != 'T'                                            -- exclude tunnels
+  AND COALESCE(transport_line_structure_code, '') != 'T'                              -- exclude tunnels
 
   UNION ALL
 
