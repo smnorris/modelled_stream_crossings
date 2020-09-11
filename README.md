@@ -34,6 +34,7 @@ Streams are from the [BC Freshwater Atlas](https://catalogue.data.gov.bc.ca/data
 - GDAL (tested with >= v2.4.4)
 - Python (>=3.6)
 - [bcdata](https://github.com/smnorris/bcdata)
+- wget, unzip
 
 
 ## Installation
@@ -46,3 +47,15 @@ To get the latest:
     cd bcstreamcrossings
 
 
+## Run the scripts
+
+Scripts presume that environment variables PGHOST, PGUSER, PGDATABASE, PGPORT, DATABASE_URL are set to the appropriate db and that password authentication for the database is not required
+
+The scripts are run via these bash control scripts.
+
+```
+$ ./01_load.sh
+$ ./02_process.sh
+```
+
+## Outputs
