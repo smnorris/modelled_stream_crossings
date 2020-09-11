@@ -10,7 +10,7 @@ set -euxo pipefail
 
 # Directly download the DRA archive, it is too big to reliably request via WFS
 # *** NOTE ***
-# Structure of data in this archive DO NOT MATCH structure in the BCGW !
+# Structure of data in this archive DOES NOT MATCH structure in the BCGW !
 # To avoid this issue, load data to whse_basemapping.transport_line rather than DRA_DGTL_ROAD_ATLAS_MPAR_SP
 # ************
 wget -N ftp://ftp.geobc.gov.bc.ca/sections/outgoing/bmgs/DRA_Public/dgtl_road_atlas.gdb.zip
@@ -26,7 +26,7 @@ ogr2ogr \
   dgtl_road_atlas.gdb \
   transport_line
 
-# get additional data direct from BCGW. Note the ALLCAPS for the requests
+# get additional data direct from BCGW.
 # just request everything and run subset queries in the crossing generation script
 bcdata bc2pg WHSE_FOREST_TENURE.FTEN_ROAD_SEGMENT_LINES_SVW # this table doesn't have a single primary key
 bcdata bc2pg WHSE_MINERAL_TENURE.OG_ROAD_SEGMENT_PERMIT_SP --fid og_road_segment_permit_id

@@ -49,12 +49,16 @@ To get the latest:
 
 ## Run the scripts
 
-Scripts presume that environment variables PGHOST, PGUSER, PGDATABASE, PGPORT, DATABASE_URL are set to the appropriate db and that password authentication for the database is not required
+Scripts presume that environment variables `PGHOST, PGUSER, PGDATABASE, PGPORT, DATABASE_URL` are set to the appropriate db and that password authentication for the database is not required.
 
-The scripts are run via these bash control scripts.
+If required, download the data:
 
 ```
 $ ./01_load.sh
+```
+
+Run the overlays and produce the outputs:
+```
 $ ./02_process.sh
 ```
 
