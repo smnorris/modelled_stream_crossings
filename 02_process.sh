@@ -19,3 +19,6 @@ psql -c "CREATE INDEX ON fish_passage.preliminary_stream_crossings (railway_trac
 psql -c "CREATE INDEX ON fish_passage.preliminary_stream_crossings (blue_line_key);"
 psql -c "CREATE INDEX ON fish_passage.preliminary_stream_crossings (linear_feature_id);"
 psql -c "CREATE INDEX ON fish_passage.preliminary_stream_crossings USING GIST (geom);"
+
+# remove same-source road duplicates
+psql -f sql/03_remove_same_source_duplicates.sql

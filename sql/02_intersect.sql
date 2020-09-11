@@ -32,7 +32,8 @@ roads AS
   INNER JOIN wsg w
   ON ST_Intersects(r.geom, w.geom)
   WHERE transport_line_type_code NOT IN ('F','FP','FR','T','TD','TR','TS','RP','RWA') -- exclude trails and ferry/water
-  AND transport_line_surface_code NOT IN ('D')  -- exclude decomissioned roads
+  AND transport_line_surface_code NOT IN ('D')                                        -- exclude decomissioned roads
+  AND transport_line_structure_code != 'T'                                            -- exclude tunnels
 
   UNION ALL
 
