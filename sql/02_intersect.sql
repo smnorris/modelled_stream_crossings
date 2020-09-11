@@ -146,8 +146,10 @@ AS
              ST_Linemerge(geom_s),
              geom_x
             ) * length_metre + downstream_route_measure
-      -- streams and roads can overlap, resulting in a line intersection - handle this case
-      -- by creating centorid
+      -- Streams and roads can overlap, resulting in a line intersection - handle this case by creating a centroid.
+      -- Note that this approach presumes that there is just a *single* line of overlap per intersecting features.
+      -- If there are exceptions to this, the resulting point probably won't be in the expected location. This is likely
+      -- very rare, and for instances like this we are just guessing where a structure would be anyway.
       WHEN ST_Dimension(geom_x) = 1
       THEN ST_LineLocatePoint(
              ST_Linemerge(geom_s),
