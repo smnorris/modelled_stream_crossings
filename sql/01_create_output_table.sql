@@ -1,8 +1,8 @@
-DROP TABLE IF EXISTS fish_passage.preliminary_stream_crossings;
+DROP TABLE IF EXISTS fish_passage.modelled_stream_crossings;
 
-CREATE TABLE fish_passage.preliminary_stream_crossings
+CREATE TABLE fish_passage.modelled_stream_crossings
 (
-  preliminary_crossing_id serial primary key,
+  modelled_crossing_id serial primary key,
   transport_line_id integer,
   ften_road_segment_id text,
   og_road_segment_permit_id integer,
@@ -13,7 +13,7 @@ CREATE TABLE fish_passage.preliminary_stream_crossings
   downstream_route_measure double precision,
   wscode_ltree ltree,
   localcode_ltree ltree,
-  edge_type integer,
   watershed_group_code character varying(4),
+  modelled_crossing_type character varying(5),
   geom geometry(PointZM, 3005)
 );

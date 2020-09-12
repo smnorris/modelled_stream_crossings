@@ -2,13 +2,29 @@
 set -euxo pipefail
 
 # create empty crossings table
-psql -f sql/01_create_preliminary_crossings.sql
+psql -f sql/01_create_output_table.sql
 
-# load preliminary crossings by watershed group (~6min)
+# load preliminary crossings by source and watershed group
 time psql -t -P border=0,footer=no \
--c "SELECT ''''||watershed_group_code||'''' FROM whse_basemapping.fwa_watershed_groups_poly" \
+-c "SELECT ''''||watershed_group_code||'''' FROM whse_basemapping.fwa_watershed_groups_poly WHERE watershed_group_code IN ('VICT','COWN','SANJ')" \
     | sed -e '$d' \
-    | parallel --colsep ' ' psql -f sql/02_intersect.sql -v wsg={1}
+    | parallel --colsep ' ' psql -f sql/02_intersect_dra.sql -v wsg={1}
+
+time psql -t -P border=0,footer=no \
+-c "SELECT ''''||watershed_group_code||'''' FROM whse_basemapping.fwa_watershed_groups_poly WHERE watershed_group_code IN ('VICT','COWN','SANJ')" \
+    | sed -e '$d' \
+    | parallel --colsep ' ' psql -f sql/03_intersect_ften.sql -v wsg={1}
+
+time psql -t -P border=0,footer=no \
+-c "SELECT ''''||watershed_group_code||'''' FROM whse_basemapping.fwa_watershed_groups_poly WHERE watershed_group_code IN ('VICT','COWN','SANJ')" \
+    | sed -e '$d' \
+    | parallel --colsep ' ' psql -f sql/04_intersect_ogc.sql -v wsg={1}
+
+time psql -t -P border=0,footer=no \
+-c "SELECT ''''||watershed_group_code||'''' FROM whse_basemapping.fwa_watershed_groups_poly WHERE watershed_group_code IN ('VICT','COWN','SANJ')" \
+    | sed -e '$d' \
+    | parallel --colsep ' ' psql -f sql/05_intersect_railway.sql -v wsg={1}
+
 
 # create indexes
 psql -c "CREATE INDEX ON fish_passage.preliminary_stream_crossings (transport_line_id);"
@@ -19,6 +35,3 @@ psql -c "CREATE INDEX ON fish_passage.preliminary_stream_crossings (railway_trac
 psql -c "CREATE INDEX ON fish_passage.preliminary_stream_crossings (blue_line_key);"
 psql -c "CREATE INDEX ON fish_passage.preliminary_stream_crossings (linear_feature_id);"
 psql -c "CREATE INDEX ON fish_passage.preliminary_stream_crossings USING GIST (geom);"
-
-# remove same-source road duplicates
-psql -f sql/03_remove_same_source_duplicates.sql

@@ -47,9 +47,18 @@ ogr2ogr \
   -f PostgreSQL \
   "PG:host=$PGHOST user=$PGUSER dbname=$PGDATABASE port=$PGPORT" \
   -overwrite \
+  -nln whse_basemapping.transport_line_divided_code \
+  dgtl_road_atlas.gdb \
+  TRANSPORT_LINE_DIVIDED_CODE
+
+ogr2ogr \
+  -f PostgreSQL \
+  "PG:host=$PGHOST user=$PGUSER dbname=$PGDATABASE port=$PGPORT" \
+  -overwrite \
   -nln whse_basemapping.transport_line_structure_code \
   dgtl_road_atlas.gdb \
   TRANSPORT_LINE_STRUCTURE_CODE
+
 
 # get additional data direct from BCGW.
 # just request everything and run subset queries in the crossing generation script
