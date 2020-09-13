@@ -63,7 +63,7 @@ Run the overlays and produce the outputs:
 $ ./02_process.sh
 ```
 
-## Outputs
+## Output
 
 Output table is `fish_passage.modelled_stream_crossings`:
 
@@ -72,6 +72,8 @@ Output table is `fish_passage.modelled_stream_crossings`:
             Column             |          Type          | Collation | Nullable |                                       Default
 -------------------------------+------------------------+-----------+----------+--------------------------------------------------------------------------------------
  modelled_crossing_id          | integer                |           | not null | nextval('fish_passage.modelled_stream_crossings_modelled_crossing_id_seq'::regclass)
+ modelled_crossing_type        | character varying(5)   |           |          |
+ modelled_crossing_type_source | text[]                 |           |          |
  transport_line_id             | integer                |           |          |
  ften_road_segment_id          | text                   |           |          |
  og_road_segment_permit_id     | integer                |           |          |
@@ -83,8 +85,6 @@ Output table is `fish_passage.modelled_stream_crossings`:
  wscode_ltree                  | ltree                  |           |          |
  localcode_ltree               | ltree                  |           |          |
  watershed_group_code          | character varying(4)   |           |          |
- modelled_crossing_type        | character varying(5)   |           |          |
- modelled_crossing_type_source | text[]                 |           |          |
  geom                          | geometry(PointZM,3005) |           |          |
 Indexes:
     "modelled_stream_crossings_pkey" PRIMARY KEY, btree (modelled_crossing_id)
@@ -98,4 +98,4 @@ Indexes:
     "modelled_stream_crossings_transport_line_id_idx" btree (transport_line_id)
 ```
 
-Also output is [`modelled_stream_crossing_summary.csv`](modelled_stream_crossing_summary.csv), listing number of crossings per watershed group by crossing type and source.
+Also output is [`modelled_stream_crossing_summary.csv`](modelled_stream_crossing_summary.csv), summarizing the number of crossings per watershed group by crossing type and source.
