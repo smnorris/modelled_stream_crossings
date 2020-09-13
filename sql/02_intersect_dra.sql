@@ -13,7 +13,7 @@ streams AS
   ON s.watershed_group_code = wsg.watershed_group_code
   WHERE s.fwa_watershed_code NOT LIKE '999%' -- exclude streams that are not part of the network
   AND s.edge_type NOT IN (1410, 1425)        -- exclude subsurface flow
-  AND s.localcode_ltree IS NOT NULL          -- exclude streams with no local code / invalid local code
+  AND s.localcode_ltree IS NOT NULL          -- exclude streams with no local code
 ),
 
 roads AS
