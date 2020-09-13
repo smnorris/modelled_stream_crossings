@@ -1,3 +1,5 @@
+CREATE SCHEMA IF NOT EXISTS fish_passage;
+
 DROP TABLE IF EXISTS fish_passage.modelled_stream_crossings;
 
 CREATE TABLE fish_passage.modelled_stream_crossings
@@ -15,5 +17,6 @@ CREATE TABLE fish_passage.modelled_stream_crossings
   localcode_ltree ltree,
   watershed_group_code character varying(4),
   modelled_crossing_type character varying(5),
+  modelled_crossing_type_source text[],
   geom geometry(PointZM, 3005)
 );

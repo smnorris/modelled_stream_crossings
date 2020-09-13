@@ -22,7 +22,6 @@ roads AS
   SELECT
     transport_line_id,
     transport_line_type_code,
-    transport_line_structure_code,
     CASE
        WHEN ST_Within(r.geom, w.geom) THEN r.geom
        ELSE ST_Intersection(r.geom, w.geom)
@@ -41,27 +40,24 @@ intersections AS
   SELECT
     r.transport_line_id,
     r.transport_line_type_code,
-    r.transport_line_structure_code,
     s.linear_feature_id,
-    s.blue_line_key,
     s.wscode_ltree,
     s.localcode_ltree,
+    s.blue_line_key,
+    s.waterbody_key,
     s.length_metre,
     s.downstream_route_measure,
+    s.upstream_route_measure,
+    s.stream_order,
     s.geom as geom_s,
-    CASE
-      WHEN s.edge_type IN (1200, 1250, 1300, 1350, 1400, 1450, 1475) OR
-           r.transport_line_structure_code IN ('B','C','E','F','O','R','V')
-      THEN 'OBS'
-      ELSE 'CBS'
-    END as modelled_crossing_type,
+    r.geom as geom_r,
     -- dump any collections/mulitpart features to singlepart
     (ST_Dump(
       ST_Intersection(
         (ST_Dump(ST_Force2d(r.geom))).geom,
         (ST_Dump(ST_Force2d(s.geom))).geom
       )
-    )).geom AS geom_x
+    )).geom AS geom
   FROM roads r
   INNER JOIN streams s
   ON ST_Intersects(r.geom, s.geom)
@@ -70,92 +66,148 @@ intersections AS
 -- to eliminate duplication, cluster the crossings,
 -- merging points on the same type of road/structure and on the same stream
 -- do this for variable widths depending on level of road
-clusters AS
+cluster_by_type AS
 (
   -- 30m clustering for freeways/highways
   SELECT
-    max(transport_line_id) AS transport_line_id,
-    transport_line_type_code,
-    linear_feature_id,
-    blue_line_key,
-    wscode_ltree,
-    localcode_ltree,
-    length_metre,
-    downstream_route_measure,
-    geom_s,
-    modelled_crossing_type,
-    ST_Centroid(unnest(ST_ClusterWithin(geom_x, 30))) as geom_x
+    ST_Centroid(unnest(ST_ClusterWithin(geom, 30))) as geom
   FROM intersections
   WHERE transport_line_type_code IN ('RF', 'RH1', 'RH2')
-  GROUP BY transport_line_type_code, linear_feature_id, blue_line_key, wscode_ltree, localcode_ltree, geom_s, modelled_crossing_type, length_metre, downstream_route_measure
   UNION ALL
   -- 20m for arterial / collector
   SELECT
-    max(transport_line_id) AS transport_line_id,
-    transport_line_type_code,
-    linear_feature_id,
-    blue_line_key,
-    wscode_ltree,
-    localcode_ltree,
-    length_metre,
-    downstream_route_measure,
-    geom_s,
-    modelled_crossing_type,
-    ST_Centroid(unnest(ST_ClusterWithin(geom_x, 20))) as geom_x
+    ST_Centroid(unnest(ST_ClusterWithin(geom, 20))) as geom
   FROM intersections
   WHERE transport_line_type_code IN ('RA1', 'RA2', 'RC1', 'RC2')
-  GROUP BY transport_line_type_code, linear_feature_id, blue_line_key, wscode_ltree, localcode_ltree, geom_s, modelled_crossing_type, length_metre, downstream_route_measure
   UNION ALL
   -- 12.5m for everything else
   SELECT
-    max(transport_line_id) AS transport_line_id,
-    transport_line_type_code,
-    linear_feature_id,
-    blue_line_key,
-    wscode_ltree,
-    localcode_ltree,
-    length_metre,
-    downstream_route_measure,
-    geom_s,
-    modelled_crossing_type,
-    ST_Centroid(unnest(ST_ClusterWithin(geom_x, 12.5))) as geom_x
+    ST_Centroid(unnest(ST_ClusterWithin(geom, 12.5))) as geom_x
   FROM intersections
-  WHERE transport_line_type_code NOT IN ('RF', 'RH1', 'RH2','RA1', 'RA2', 'RC1', 'RC2')
-  GROUP BY transport_line_type_code, linear_feature_id, blue_line_key, wscode_ltree, localcode_ltree, geom_s, modelled_crossing_type, length_metre, downstream_route_measure
+  WHERE transport_line_type_code NOT IN ('RF', 'RH1', 'RH2', 'RA1', 'RA2', 'RC1', 'RC2')
 ),
 
--- derive measures
-intersections_measures AS
+-- Use a smaller tolerance for clustering across road types and streams
+cluster_across_types AS
 (
   SELECT
-    i.*,
-    ST_LineLocatePoint(
-       ST_Linemerge(geom_s),
-       geom_x
-      ) * length_metre + downstream_route_measure
-    AS downstream_route_measure_pt
-  FROM clusters i
+    ST_Centroid(unnest(ST_ClusterWithin(geom, 10))) as geom
+  FROM cluster_by_type
+),
+
+-- By clustering/aggregating above, we lose stream and road attributes of the point.
+-- Join back to streams - when there is more than 1 stream within our tolerance
+-- due to clustering above, match on the stream with the higher order.
+streams_nn AS
+(
+  SELECT DISTINCT ON (geom_x)
+    geom_x,
+    linear_feature_id,
+    wscode_ltree,
+    localcode_ltree,
+    blue_line_key,
+    waterbody_key,
+    length_metre,
+    downstream_route_measure,
+    upstream_route_measure,
+    geom_s
+  FROM
+     (
+      SELECT
+        pt.geom as geom_x,
+        nn.linear_feature_id,
+        nn.wscode_ltree,
+        nn.localcode_ltree,
+        nn.blue_line_key,
+        nn.waterbody_key,
+        nn.length_metre,
+        nn.downstream_route_measure,
+        nn.upstream_route_measure,
+        nn.stream_order,
+        nn.geom_s
+      FROM cluster_across_types as pt
+      CROSS JOIN LATERAL
+      (SELECT
+         i.linear_feature_id,
+         i.wscode_ltree,
+         i.localcode_ltree,
+         i.blue_line_key,
+         i.waterbody_key,
+         i.length_metre,
+         i.downstream_route_measure,
+         i.upstream_route_measure,
+         i.stream_order,
+         i.geom_s,
+         ST_Distance(i.geom_s, pt.geom) as distance_to_stream
+        FROM intersections AS i
+        ORDER BY i.geom <-> pt.geom
+        LIMIT 5) as nn
+      WHERE nn.distance_to_stream < 10.1
+    ) as stream_nn
+  ORDER BY geom_x, stream_order
+),
+
+-- derive the measures
+crossing_measures AS
+(
+  SELECT
+    *,
+  -- create an integer measure - using ceil/floor to ensure it ends up on the stream line
+  CEIL( GREATEST(downstream_route_measure, FLOOR( LEAST(upstream_route_measure,
+    (
+       ST_LineLocatePoint(geom_s, geom_x) * length_metre
+    )
+    + downstream_route_measure )))
+  ) as downstream_route_measure_pt
+    --ST_LineLocatePoint(
+   --    ST_Linemerge(geom_s),
+   --    geom_x
+   --   ) * length_metre + downstream_route_measure
+   -- AS downstream_route_measure_pt
+  FROM streams_nn
+),
+
+-- and then the geoms
+crossing_geoms AS
+(
+  SELECT
+    linear_feature_id,
+    blue_line_key,
+    downstream_route_measure_pt as downstream_route_measure,
+    wscode_ltree,
+    localcode_ltree,
+    (ST_Dump(ST_LocateAlong(geom_s, downstream_route_measure_pt))).geom as geom
+  FROM crossing_measures
 )
 
--- finally, generate the point from the measure.
+-- and finally, join back to closest road and insert the result into the crossing table
 INSERT INTO fish_passage.modelled_stream_crossings
-  (transport_line_id,
-  linear_feature_id,
-  blue_line_key,
-  downstream_route_measure,
-  wscode_ltree,
-  localcode_ltree,
-  watershed_group_code,
-  modelled_crossing_type,
-  geom)
+  (
+    transport_line_id,
+    linear_feature_id,
+    blue_line_key,
+    downstream_route_measure,
+    wscode_ltree,
+    localcode_ltree,
+    watershed_group_code,
+    geom
+  )
 SELECT
-  transport_line_id,
-  linear_feature_id,
-  blue_line_key,
-  downstream_route_measure_pt as downstream_route_measure,
-  wscode_ltree,
-  localcode_ltree,
+  nn.transport_line_id,
+  pt.linear_feature_id,
+  pt.blue_line_key,
+  pt.downstream_route_measure,
+  pt.wscode_ltree,
+  pt.localcode_ltree,
   :wsg AS watershed_group_code,
-  modelled_crossing_type,
-  (ST_Dump(ST_LocateAlong(geom_s, downstream_route_measure_pt))).geom as geom
-FROM intersections_measures;
+  pt.geom
+FROM crossing_geoms as pt
+CROSS JOIN LATERAL
+  ( SELECT
+      i.transport_line_id,
+      ST_Distance(i.geom_r, pt.geom) as distance_to_road
+    FROM intersections AS i
+    ORDER BY i.geom <-> pt.geom
+    LIMIT 1
+  ) AS nn
+WHERE nn.distance_to_road < 16;  -- use a fairly generous tolerance to handle crossings that were clustered at 30m

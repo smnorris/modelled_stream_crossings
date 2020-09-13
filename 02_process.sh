@@ -25,8 +25,6 @@ time psql -t -P border=0,footer=no \
     | sed -e '$d' \
     | parallel --colsep ' ' psql -f sql/05_intersect_railway.sql -v wsg={1}
 
-
-# create indexes
 psql -c "CREATE INDEX ON fish_passage.modelled_stream_crossings (transport_line_id);"
 psql -c "CREATE INDEX ON fish_passage.modelled_stream_crossings (ften_road_segment_id);"
 psql -c "CREATE INDEX ON fish_passage.modelled_stream_crossings (og_road_segment_permit_id);"
@@ -39,5 +37,8 @@ psql -c "CREATE INDEX ON fish_passage.modelled_stream_crossings USING GIST (geom
 # remove duplicate crossings introduced by using multiple sources
 psql -f sql/06_remove_duplicates.sql
 
-# label MOT Bridges as OBS
-psql -f sql/07_mot_bridges.sql
+# find and label open bottom structures/bridges
+psql -f sql/07_identify_open_bottom_structures.sql
+
+# report on results
+psql2csv < sql/modelled_stream_crossing_summary.sql > modelled_stream_crossing_summary.csv

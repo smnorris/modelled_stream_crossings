@@ -55,34 +55,10 @@ intersections AS
   ON ST_Intersects(r.geom, s.geom)
 ),
 
--- spatial join to railway structures to find bridges
-intersections_structures AS
-(
-  SELECT
-    railway_track_id,
-    linear_feature_id,
-    blue_line_key,
-    wscode_ltree,
-    localcode_ltree,
-    length_metre,
-    downstream_route_measure,
-    geom_s,
-    CASE
-        WHEN i.edge_type IN (1200, 1250, 1300, 1350, 1400, 1450, 1475)
-        OR UPPER(r.structure_type) LIKE 'BRIDGE%'
-        THEN 'OBS'
-        ELSE 'CBS'
-    END as modelled_crossing_type,
-    geom_x
-  FROM intersections i
-  LEFT OUTER JOIN whse_basemapping.gba_railway_structure_lines_sp r
-  ON ST_Intersects(ST_Buffer(i.geom_x, 1), r.geom)
-),
-
--- to eliminate duplication, cluster the crossings
+-- to eliminate duplication, cluster crossings within 20m
+-- do not cluster across streams
 clusters AS
 (
-  -- 20m clustering for railways
   SELECT
     max(railway_track_id) as railway_track_id,
     linear_feature_id,
@@ -91,11 +67,10 @@ clusters AS
     localcode_ltree,
     length_metre,
     downstream_route_measure,
-    modelled_crossing_type,
     geom_s,
     ST_Centroid(unnest(ST_ClusterWithin(geom_x, 20))) as geom_x
-  FROM intersections_structures
-  GROUP BY linear_feature_id, blue_line_key, wscode_ltree, localcode_ltree, geom_s, length_metre, downstream_route_measure, modelled_crossing_type
+  FROM intersections
+  GROUP BY linear_feature_id, blue_line_key, wscode_ltree, localcode_ltree, geom_s, length_metre, downstream_route_measure
 ),
 
 -- derive measures
@@ -120,7 +95,6 @@ INSERT INTO fish_passage.modelled_stream_crossings
   wscode_ltree,
   localcode_ltree,
   watershed_group_code,
-  modelled_crossing_type,
   geom)
 SELECT
   railway_track_id,
@@ -130,6 +104,5 @@ SELECT
   wscode_ltree,
   localcode_ltree,
   :wsg AS watershed_group_code,
-  modelled_crossing_type,
   (ST_Dump(ST_LocateAlong(geom_s, downstream_route_measure_pt))).geom as geom
 FROM intersections_measures;

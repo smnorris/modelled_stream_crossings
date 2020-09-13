@@ -61,11 +61,6 @@ intersections AS
     s.length_metre,
     s.downstream_route_measure,
     s.geom as geom_s,
-    CASE
-      WHEN s.edge_type IN (1200, 1250, 1300, 1350, 1400, 1450, 1475)
-      THEN 'OBS'
-      ELSE 'CBS'
-    END as modelled_crossing_type,
     -- dump any collections/mulitpart features to singlepart
     (ST_Dump(
       ST_Intersection(
@@ -81,7 +76,7 @@ intersections AS
 -- to eliminate duplication, cluster the crossings,
 clusters AS
 (
-  -- 10m clustering
+  -- 12.5m clustering. Don't bother to cluster across streams at this point
   SELECT
     max(og_road_segment_permit_id) AS og_road_segment_permit_id,
     max(og_petrlm_dev_rd_pre06_pub_id) AS og_petrlm_dev_rd_pre06_pub_id,
@@ -92,10 +87,9 @@ clusters AS
     length_metre,
     downstream_route_measure,
     geom_s,
-    modelled_crossing_type,
-    ST_Centroid(unnest(ST_ClusterWithin(geom_x, 10))) as geom_x
+    ST_Centroid(unnest(ST_ClusterWithin(geom_x, 12.5))) as geom_x
   FROM intersections
-  GROUP BY linear_feature_id, blue_line_key, wscode_ltree, localcode_ltree, geom_s, modelled_crossing_type, length_metre, downstream_route_measure
+  GROUP BY linear_feature_id, blue_line_key, wscode_ltree, localcode_ltree, geom_s, length_metre, downstream_route_measure
 ),
 
 -- derive measures
@@ -121,7 +115,6 @@ INSERT INTO fish_passage.modelled_stream_crossings
   wscode_ltree,
   localcode_ltree,
   watershed_group_code,
-  modelled_crossing_type,
   geom)
 SELECT
   og_road_segment_permit_id,
@@ -132,6 +125,5 @@ SELECT
   wscode_ltree,
   localcode_ltree,
   :wsg AS watershed_group_code,
-  modelled_crossing_type,
   (ST_Dump(ST_LocateAlong(geom_s, downstream_route_measure_pt))).geom as geom
 FROM intersections_measures;
