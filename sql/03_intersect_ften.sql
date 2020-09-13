@@ -58,7 +58,7 @@ intersections AS
 -- to eliminate duplication, cluster the crossings,
 clusters AS
 (
-  -- 12.5m clustering for FTEN roads
+  -- 10m clustering for FTEN roads
   SELECT
     max(ften_road_segment_id) AS ften_road_segment_id,
     linear_feature_id,

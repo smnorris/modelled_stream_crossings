@@ -30,8 +30,8 @@ Streams are from the [BC Freshwater Atlas](https://catalogue.data.gov.bc.ca/data
 
 - a FWA database created by [fwapg](https://github.com/smnorris/fwapg)
 - PostgreSQL (requires >= v12)
-- PostGIS (tested with >=v3.0.1)
-- GDAL (tested with >= v2.4.4)
+- PostGIS (tested with v3.0.2)
+- GDAL (tested with v3.1.2)
 - Python (>=3.6)
 - [bcdata](https://github.com/smnorris/bcdata)
 - [pscis](https://github.com/smnorris/pscis)
@@ -40,7 +40,7 @@ Streams are from the [BC Freshwater Atlas](https://catalogue.data.gov.bc.ca/data
 
 ## Installation
 
-The repository is a collection of sql files and shell scripts - no installation is required.
+The repository is a collection of sql files and shell (bash) scripts - no installation is required.
 
 To get the latest:
 

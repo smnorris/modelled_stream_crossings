@@ -13,7 +13,7 @@ AND s.stream_order >= 6
 -- this is a office identified culvert.
 -- if we are going to flag culverts on streams of order 6 and greater
 -- a lookup should be maintained but this single crossing is fine in here for now
-AND linear_feature_id != 701296585;
+AND s.linear_feature_id != 701296585;
 
 -- double line streams/waterbodies
 UPDATE fish_passage.modelled_stream_crossings x
