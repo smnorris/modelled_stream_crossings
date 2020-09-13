@@ -38,3 +38,6 @@ psql -c "CREATE INDEX ON fish_passage.modelled_stream_crossings USING GIST (geom
 
 # remove duplicate crossings introduced by using multiple sources
 psql -f sql/06_remove_duplicates.sql
+
+# label MOT Bridges as OBS
+psql -f sql/07_mot_bridges.sql
