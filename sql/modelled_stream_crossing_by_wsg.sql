@@ -10,7 +10,7 @@ SELECT
     WHEN railway_track_id IS NOT NULL THEN 'RAILWAY'
   END as source,
   modelled_crossing_type,
-  array_to_string(modelled_crossing_type_source, ';') as bridge_source
+  array_to_string(modelled_crossing_type_source, '; ') as bridge_source
 FROM fish_passage.modelled_stream_crossings
 )
 
