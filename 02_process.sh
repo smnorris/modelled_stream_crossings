@@ -6,22 +6,22 @@ psql -f sql/01_create_output_table.sql
 
 # load preliminary crossings by source and watershed group
 time psql -t -P border=0,footer=no \
--c "SELECT ''''||watershed_group_code||'''' FROM whse_basemapping.fwa_watershed_groups_poly WHERE watershed_group_code" \
+-c "SELECT ''''||watershed_group_code||'''' FROM whse_basemapping.fwa_watershed_groups_poly" \
     | sed -e '$d' \
     | parallel --colsep ' ' psql -f sql/02_intersect_dra.sql -v wsg={1}
 
 time psql -t -P border=0,footer=no \
--c "SELECT ''''||watershed_group_code||'''' FROM whse_basemapping.fwa_watershed_groups_poly WHERE watershed_group_code" \
+-c "SELECT ''''||watershed_group_code||'''' FROM whse_basemapping.fwa_watershed_groups_poly" \
     | sed -e '$d' \
     | parallel --colsep ' ' psql -f sql/03_intersect_ften.sql -v wsg={1}
 
 time psql -t -P border=0,footer=no \
--c "SELECT ''''||watershed_group_code||'''' FROM whse_basemapping.fwa_watershed_groups_poly WHERE watershed_group_code" \
+-c "SELECT ''''||watershed_group_code||'''' FROM whse_basemapping.fwa_watershed_groups_poly" \
     | sed -e '$d' \
     | parallel --colsep ' ' psql -f sql/04_intersect_ogc.sql -v wsg={1}
 
 time psql -t -P border=0,footer=no \
--c "SELECT ''''||watershed_group_code||'''' FROM whse_basemapping.fwa_watershed_groups_poly WHERE watershed_group_code" \
+-c "SELECT ''''||watershed_group_code||'''' FROM whse_basemapping.fwa_watershed_groups_poly" \
     | sed -e '$d' \
     | parallel --colsep ' ' psql -f sql/05_intersect_railway.sql -v wsg={1}
 
