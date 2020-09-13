@@ -41,4 +41,6 @@ psql -f sql/06_remove_duplicates.sql
 psql -f sql/07_identify_open_bottom_structures.sql
 
 # report on results
-psql2csv < sql/modelled_stream_crossing_summary.sql > modelled_stream_crossing_summary.csv
+mkdir -p reports
+psql2csv < sql/modelled_stream_crossing_summary.sql > reports/modelled_stream_crossing_summary.csv
+psql2csv < sql/modelled_stream_crossing_by_wsg.sql > reports/modelled_stream_crossing_by_wsg.csv

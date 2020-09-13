@@ -98,7 +98,10 @@ Indexes:
     "modelled_stream_crossings_transport_line_id_idx" btree (transport_line_id)
 ```
 
-Also output is [`modelled_stream_crossing_summary.csv`](modelled_stream_crossing_summary.csv), summarizing the number of crossings per watershed group by crossing type and source.
+Also output are two summary reports:
+
+- [`modelled_stream_crossing_summary.csv`](reports/modelled_stream_crossing_summary.csv) - total number of crossings in BC, by type
+- [`modelled_stream_crossing_by_wsg.csv`](reports/modelled_stream_crossing_by_wsg.csv) - number of crossings per watershed group by crossing type and source
 
 ## Optional
 
