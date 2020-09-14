@@ -1,17 +1,9 @@
-WITH wsg AS
-(
-  SELECT watershed_group_code, geom
-  FROM whse_basemapping.fwa_watershed_groups_poly
-  WHERE watershed_group_code = :wsg
-),
-
-streams AS
+WITH streams AS
 (
   SELECT s.*
   FROM whse_basemapping.fwa_stream_networks_sp s
-  INNER JOIN wsg
-  ON s.watershed_group_code = wsg.watershed_group_code
-  WHERE s.fwa_watershed_code NOT LIKE '999%' -- exclude streams that are not part of the network
+  WHERE s.watershed_group_code = :wsg
+  AND s.fwa_watershed_code NOT LIKE '999%' -- exclude streams that are not part of the network
   AND s.edge_type NOT IN (1410, 1425)        -- exclude subsurface flow
   AND s.localcode_ltree IS NOT NULL          -- exclude streams with no local code
 ),
@@ -22,13 +14,8 @@ roads AS
   SELECT
     og_road_segment_permit_id,
     NULL::int AS og_petrlm_dev_rd_pre06_pub_id,
-    CASE
-       WHEN ST_Within(r.geom, w.geom) THEN r.geom
-       ELSE ST_Intersection(r.geom, w.geom)
-    END as geom
+    geom
   FROM whse_mineral_tenure.og_road_segment_permit_sp r
-  INNER JOIN wsg w
-  ON ST_Intersects(r.geom, w.geom)
   WHERE status = 'Approved' AND road_type_desc != 'Snow Ice Road' -- exclude winter roads
 
   UNION ALL
@@ -37,13 +24,8 @@ roads AS
   SELECT
     NULL::int AS og_road_segment_permit_id,
     og_petrlm_dev_rd_pre06_pub_id,
-    CASE
-       WHEN ST_Within(r.geom, w.geom) THEN r.geom
-       ELSE ST_Intersection(r.geom, w.geom)
-    END as geom
+    geom
   FROM whse_mineral_tenure.og_petrlm_dev_rds_pre06_pub_sp r
-  INNER JOIN wsg w
-  ON ST_Intersects(r.geom, w.geom)
   WHERE petrlm_development_road_type != 'WINT' -- exclude winter roads
 
 ),

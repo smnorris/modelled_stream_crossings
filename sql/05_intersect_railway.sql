@@ -1,17 +1,9 @@
-WITH wsg AS
-(
-  SELECT watershed_group_code, geom
-  FROM whse_basemapping.fwa_watershed_groups_poly
-  WHERE watershed_group_code = :wsg
-),
-
-streams AS
+WITH streams AS
 (
   SELECT s.*
   FROM whse_basemapping.fwa_stream_networks_sp s
-  INNER JOIN wsg
-  ON s.watershed_group_code = wsg.watershed_group_code
-  WHERE s.fwa_watershed_code NOT LIKE '999%' -- exclude streams that are not part of the network
+  WHERE s.watershed_group_code = :wsg
+  AND s.fwa_watershed_code NOT LIKE '999%' -- exclude streams that are not part of the network
   AND s.edge_type NOT IN (1410, 1425)        -- exclude subsurface flow
   AND s.localcode_ltree IS NOT NULL          -- exclude streams with no local code
 ),
@@ -21,13 +13,8 @@ roads AS
   -- RAILWAY
   SELECT
     railway_track_id,
-    CASE
-       WHEN ST_Within(r.geom, w.geom) THEN r.geom
-       ELSE ST_Intersection(r.geom, w.geom)
-    END as geom
+    geom
   FROM whse_basemapping.gba_railway_tracks_sp r
-  INNER JOIN wsg w
-  ON ST_Intersects(r.geom, w.geom)
 ),
 
 -- overlay with streams, creating intersection points
