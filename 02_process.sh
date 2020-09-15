@@ -23,7 +23,12 @@ time psql -t -P border=0,footer=no \
 time psql -t -P border=0,footer=no \
 -c "SELECT ''''||watershed_group_code||'''' FROM whse_basemapping.fwa_watershed_groups_poly" \
     | sed -e '$d' \
-    | parallel --colsep ' ' psql -f sql/05_intersect_railway.sql -v wsg={1}
+    | parallel --colsep ' ' psql -f sql/05_intersect_ogcpre06.sql -v wsg={1}
+
+time psql -t -P border=0,footer=no \
+-c "SELECT ''''||watershed_group_code||'''' FROM whse_basemapping.fwa_watershed_groups_poly" \
+    | sed -e '$d' \
+    | parallel --colsep ' ' psql -f sql/06_intersect_railway.sql -v wsg={1}
 
 psql -c "CREATE INDEX ON fish_passage.modelled_stream_crossings (transport_line_id);"
 psql -c "CREATE INDEX ON fish_passage.modelled_stream_crossings (ften_road_segment_id);"
@@ -35,10 +40,10 @@ psql -c "CREATE INDEX ON fish_passage.modelled_stream_crossings (linear_feature_
 psql -c "CREATE INDEX ON fish_passage.modelled_stream_crossings USING GIST (geom);"
 
 # remove duplicate crossings introduced by using multiple sources
-psql -f sql/06_remove_duplicates.sql
+psql -f sql/07_remove_duplicates.sql
 
 # find and label open bottom structures/bridges
-psql -f sql/07_identify_open_bottom_structures.sql
+psql -f sql/08_identify_open_bottom_structures.sql
 
 # report on results
 mkdir -p reports

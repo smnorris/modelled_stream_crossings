@@ -10,20 +10,20 @@ WITH streams AS
 
 roads AS
 (
-  -- OGC PERMITS
+
+  -- OGC PERMITS PRE 06
   SELECT
-    og_road_segment_permit_id,
-    NULL::int AS og_petrlm_dev_rd_pre06_pub_id,
+    og_petrlm_dev_rd_pre06_pub_id,
     geom
-  FROM whse_mineral_tenure.og_road_segment_permit_sp r
-  WHERE status = 'Approved' AND road_type_desc != 'Snow Ice Road' -- exclude winter roads
+  FROM whse_mineral_tenure.og_petrlm_dev_rds_pre06_pub_sp r
+  WHERE petrlm_development_road_type != 'WINT' -- exclude winter roads
 ),
 
 -- overlay with streams, creating intersection points and labelling bridges
 intersections AS
 (
   SELECT
-    r.og_road_segment_permit_id,
+    r.og_petrlm_dev_rd_pre06_pub_id,
     s.linear_feature_id,
     s.blue_line_key,
     s.wscode_ltree,
@@ -48,7 +48,7 @@ clusters AS
 (
   -- 12.5m clustering. Don't bother to cluster across streams at this point
   SELECT
-    max(og_road_segment_permit_id) AS og_road_segment_permit_id,
+    max(og_petrlm_dev_rd_pre06_pub_id) AS og_petrlm_dev_rd_pre06_pub_id,
     linear_feature_id,
     blue_line_key,
     wscode_ltree,
@@ -76,7 +76,7 @@ intersections_measures AS
 
 -- finally, generate the point from the measure.
 INSERT INTO fish_passage.modelled_stream_crossings
-  (og_road_segment_permit_id,
+  (og_petrlm_dev_rd_pre06_pub_id,
   linear_feature_id,
   blue_line_key,
   downstream_route_measure,
@@ -85,7 +85,7 @@ INSERT INTO fish_passage.modelled_stream_crossings
   watershed_group_code,
   geom)
 SELECT
-  og_road_segment_permit_id,
+  og_petrlm_dev_rd_pre06_pub_id,
   linear_feature_id,
   blue_line_key,
   downstream_route_measure_pt as downstream_route_measure,
