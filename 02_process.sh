@@ -39,6 +39,9 @@ psql -c "CREATE INDEX ON fish_passage.modelled_stream_crossings (blue_line_key);
 psql -c "CREATE INDEX ON fish_passage.modelled_stream_crossings (linear_feature_id);"
 psql -c "CREATE INDEX ON fish_passage.modelled_stream_crossings USING GIST (geom);"
 
+# backup for debugging the duplicate removal
+#psql -c "create table temp.modelled_stream_crossings_bk AS SELECT * FROM fish_passage.modelled_stream_crossings;"
+
 # remove duplicate crossings introduced by using multiple sources
 psql -f sql/07_remove_duplicates.sql
 
