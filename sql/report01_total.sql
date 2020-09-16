@@ -1,3 +1,4 @@
+-- total number of crossings by type
 SELECT
   modelled_crossing_type,
   count(*) as n

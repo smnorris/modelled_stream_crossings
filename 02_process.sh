@@ -50,5 +50,7 @@ psql -f sql/08_identify_open_bottom_structures.sql
 
 # report on results
 mkdir -p reports
-psql2csv < sql/modelled_stream_crossing_summary.sql > reports/modelled_stream_crossing_summary.csv
-psql2csv < sql/modelled_stream_crossing_by_wsg.sql > reports/modelled_stream_crossing_by_wsg.csv
+psql2csv < sql/report01_total.sql > reports/01_total.csv
+psql2csv < sql/report02_source.sql > reports/02_source.csv
+psql2csv < sql/report03_type_source_wsg.sql > reports/03_type_source_wsg.csv
+psql2csv < sql/report04_obs_sources > reports/04_obs_sources.csv
