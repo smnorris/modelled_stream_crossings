@@ -62,7 +62,7 @@ Once duplicates have been removed, output crossings are identified/modelled as o
 - Python (>=3.6)
 - [bcdata](https://github.com/smnorris/bcdata)
 - [pscis](https://github.com/smnorris/pscis)
-- wget, unzip
+- wget, unzip, parallel
 
 
 ## Installation
