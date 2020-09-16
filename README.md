@@ -34,7 +34,7 @@ Crossings are identified/modelled as open bottom structures via:
 | Source         | Query        | output `modelled_crossing_type_source`
 | ------------- | ------------- | ------------- |
 | [Stream order](https://catalogue.data.gov.bc.ca/dataset/freshwater-atlas-stream-network) | `stream_order >= 6` | `FWA_STREAM_ORDER` |
-| [Rivers/double line streams]((https://catalogue.data.gov.bc.ca/dataset/freshwater-atlas-stream-network))  | `edge_type IN (1200, 1250, 1300, 1350, 1400, 1450, 1475)` | `FWA_EDGE_TYPE` |
+| [Rivers/double line streams]((https://catalogue.data.gov.bc.ca/dataset/freshwater-atlas-stream-network)  | `edge_type IN (1200, 1250, 1300, 1350, 1400, 1450, 1475)` | `FWA_EDGE_TYPE` |
 | [MOT structures](https://catalogue.data.gov.bc.ca/dataset/ministry-of-transportation-mot-road-structures) | `bmis_structure_type = 'BRIDGE'` | `MOT_ROAD_STRUCTURE_SP` |
 | [PSCIS structures](https://catalogue.data.gov.bc.ca/dataset/pscis-assessments) | `current_crossing_type_code = 'OBS'` | `PSCIS` |
 | [DRA structures](https://catalogue.data.gov.bc.ca/dataset/digital-road-atlas-dra-master-partially-attributed-roads) | `transport_line_structure_code IN ('B','C','E','F','O','R','V')` | `TRANSPORT_LINE_STRUCTURE_CODE` |
