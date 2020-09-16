@@ -10,7 +10,11 @@ In addition to generating the intersection points of roads/railways and streams,
 
 ## Data sources
 
-### Transportation features
+### Stream features
+
+Streams are from the [BC Freshwater Atlas](https://catalogue.data.gov.bc.ca/dataset/freshwater-atlas-stream-network)
+
+### Linear transportation features
 
 All road and railway features as defined by these queries are used to generate stream crossings - the queries attempt to extract only transportation features at which there is likely to be a stream crossing structure.
 
@@ -22,9 +26,20 @@ All road and railway features as defined by these queries are used to generate s
 | [OGC Development Roads pre-2006](https://catalogue.data.gov.bc.ca/dataset/ogc-petroleum-development-roads-pre-2006-public-version) | `petrlm_development_road_type != 'WINT'` |
 | [NRN Railway Tracks](https://catalogue.data.gov.bc.ca/dataset/railway-track-line)  | `structure_type != 'Tunnel'` (via spatial join to `gba_railway_structure_lines_sp`) |
 
-### Stream features
 
-Streams are from the [BC Freshwater Atlas](https://catalogue.data.gov.bc.ca/dataset/freshwater-atlas-stream-network)
+### Bridges / Open Bottom Structures
+
+Crossings are identified/modelled as open bottom structures via:
+
+| Source         | Query        | output `modelled_crossing_type_source`
+| ------------- | ------------- | ------------- |
+| [Stream order](https://catalogue.data.gov.bc.ca/dataset/freshwater-atlas-stream-network) | `stream_order >= 6` | `FWA_STREAM_ORDER` |
+| [Rivers/double line streams]((https://catalogue.data.gov.bc.ca/dataset/freshwater-atlas-stream-network))  | `edge_type IN (1200, 1250, 1300, 1350, 1400, 1450, 1475)` | `FWA_EDGE_TYPE` |
+| [MOT structures](https://catalogue.data.gov.bc.ca/dataset/ministry-of-transportation-mot-road-structures) | `bmis_structure_type = 'BRIDGE'` | `MOT_ROAD_STRUCTURE_SP` |
+| [PSCIS structures](https://catalogue.data.gov.bc.ca/dataset/pscis-assessments) | `current_crossing_type_code = 'OBS'` | `PSCIS` |
+| [DRA structures](https://catalogue.data.gov.bc.ca/dataset/digital-road-atlas-dra-master-partially-attributed-roads) | `transport_line_structure_code IN ('B','C','E','F','O','R','V')` | `TRANSPORT_LINE_STRUCTURE_CODE` |
+| [Railway structures](https://catalogue.data.gov.bc.ca/dataset/railway-structure-line) | `structure_type LIKE 'BRIDGE%'` | `GBA_RAILWAY_STRUCTURE_LINES_SP` |
+
 
 ## Requirements
 
