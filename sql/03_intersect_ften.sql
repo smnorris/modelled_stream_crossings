@@ -45,7 +45,7 @@ intersections AS
 -- to eliminate duplication, cluster the crossings,
 clusters AS
 (
-  -- 10m clustering for FTEN roads
+  -- 12.5m clustering for FTEN roads
   SELECT
     max(ften_road_segment_id) AS ften_road_segment_id,
     linear_feature_id,
@@ -55,7 +55,7 @@ clusters AS
     length_metre,
     downstream_route_measure,
     geom_s,
-    ST_Centroid(unnest(ST_ClusterWithin(geom_x, 10))) as geom_x
+    ST_Centroid(unnest(ST_ClusterWithin(geom_x, 12.5))) as geom_x
   FROM intersections
   GROUP BY linear_feature_id, blue_line_key, wscode_ltree, localcode_ltree, geom_s, length_metre, downstream_route_measure
 ),

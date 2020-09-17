@@ -28,14 +28,16 @@ Road and railway features are downloaded from DataBC. Features used to generate 
 
 ### Overlay and de-duplication
 
-Intersection points of the stream and road features are created. Because we want to generate locations of individual structures, crossings are de-duplicated using several data source specific tolerances:
+Intersection points of the stream and road features are created. Because we want to generate locations of individual structures, crossings (on the same stream) are de-duplicated using several data source specific tolerances:
 
 - merge DRA crossings on freeways/highways with a 30m tolerance
 - merge DRA crossings on arterial/collector road with a 20m tolerance
 - merge other types of DRA crossings within a 12.5m tolerance
-- merge FTEN crossings within a 10m tolerance
+- merge FTEN crossings within a 12.5m tolerance
 - merge OGC crossings within a 12.5m tolerance
 - merge railway crossings within a 20m tolerance
+
+DRA crossings are also merged across streams at a tolerance of 10m.
 
 After same-source data crossings are merged, all crossings are de-duplicated using a 10m tolerance across all (road) data sources (railway crossings are not merged with the road sources). The actual location of an output crossing corresponds to the location from the highest priority dataset - in this order of decreasing priority: DRA, FTEN, OGC permits, OGC permits pre2006. Despite the duplicate removals, the unique identifier for each source road within 10m of a crossing is retained - all crossings can be linked back to their various source road datasets.
 

@@ -57,24 +57,30 @@ cluster_by_type AS
 (
   -- 30m clustering for freeways/highways
   SELECT
+    linear_feature_id,
     ST_Centroid(unnest(ST_ClusterWithin(geom, 30))) as geom
   FROM intersections
   WHERE transport_line_type_code IN ('RF', 'RH1', 'RH2')
+  GROUP BY linear_feature_id
   UNION ALL
   -- 20m for arterial / collector
   SELECT
+    linear_feature_id,
     ST_Centroid(unnest(ST_ClusterWithin(geom, 20))) as geom
   FROM intersections
   WHERE transport_line_type_code IN ('RA1', 'RA2', 'RC1', 'RC2')
+  GROUP BY linear_feature_id
   UNION ALL
   -- 12.5m for everything else
   SELECT
+    linear_feature_id,
     ST_Centroid(unnest(ST_ClusterWithin(geom, 12.5))) as geom_x
   FROM intersections
   WHERE transport_line_type_code NOT IN ('RF', 'RH1', 'RH2', 'RA1', 'RA2', 'RC1', 'RC2')
+  GROUP BY linear_feature_id
 ),
 
--- Use a smaller tolerance for clustering across road types and streams
+-- Cluster again across road types and streams using a smaller tolerance
 cluster_across_types AS
 (
   SELECT
@@ -129,9 +135,9 @@ streams_nn AS
         FROM intersections AS i
         ORDER BY i.geom <-> pt.geom
         LIMIT 5) as nn
-      WHERE nn.distance_to_stream < 10.1
+      WHERE nn.distance_to_stream < 5.01
     ) as stream_nn
-  ORDER BY geom_x, stream_order
+  ORDER BY geom_x, stream_order desc
 ),
 
 -- derive the measures
@@ -139,18 +145,8 @@ crossing_measures AS
 (
   SELECT
     *,
-  -- create an integer measure - using ceil/floor to ensure it ends up on the stream line
-  CEIL( GREATEST(downstream_route_measure, FLOOR( LEAST(upstream_route_measure,
-    (
-       ST_LineLocatePoint(geom_s, geom_x) * length_metre
-    )
-    + downstream_route_measure )))
-  ) as downstream_route_measure_pt
-    --ST_LineLocatePoint(
-   --    ST_Linemerge(geom_s),
-   --    geom_x
-   --   ) * length_metre + downstream_route_measure
-   -- AS downstream_route_measure_pt
+    (ST_LineLocatePoint(geom_s, geom_x) * length_metre)
+      + downstream_route_measure AS downstream_route_measure_pt
   FROM streams_nn
 ),
 
