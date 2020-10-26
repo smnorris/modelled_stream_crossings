@@ -128,7 +128,7 @@ Indexes:
 ```
 
 See basic summary stats for the current release in the [reports](reports) folder.
-Data extract date per release is noted in [CHANGES.txt](CHANGES.txt).
+Date of source data downloads is noted in [CHANGES.txt](CHANGES.txt) and an [extract of the current version is available here](https://hillcrestgeo.ca/outgoing/fishpassage/data/).
 
 
 ## Optional
