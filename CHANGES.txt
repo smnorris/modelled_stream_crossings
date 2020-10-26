@@ -1,0 +1,10 @@
+Changes
+=======
+
+All issue numbers are relative to https://github.com/smnorris/modelled_stream_crossings/issues
+
+v2020-10-26
+------------------
+- first release
+- streams data from fwapg v0.1.0 (FWA extract 2020-10-07)
+- road/bridge data downloaded 2020-10-22

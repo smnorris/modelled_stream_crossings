@@ -127,7 +127,8 @@ Indexes:
     "modelled_stream_crossings_transport_line_id_idx" btree (transport_line_id)
 ```
 
-Also output are several [reports](reports) summarizing crossing counts by various attributes.
+See basic summary stats for the current release in the [reports](reports) folder.
+Data extract date per release is noted in [CHANGES.txt](CHANGES.txt).
 
 
 ## Optional
