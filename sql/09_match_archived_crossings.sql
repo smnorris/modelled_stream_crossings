@@ -50,7 +50,7 @@ WITH matched AS
     FROM fish_passage.modelled_stream_crossings a
     CROSS JOIN LATERAL
     (SELECT
-       crossing_id,
+       crossing_id as modelled_crossing_id,
        ST_Distance(a.geom, b.geom) as dist
      FROM fish_passage.road_stream_crossings_all b
      ORDER BY a.geom <-> b.geom
@@ -78,7 +78,7 @@ INSERT INTO fish_passage.modelled_stream_crossings_temp
   watershed_group_code,
   geom
 )
-SELECT DISTINCT ON (crossing_id)
+SELECT DISTINCT ON (archive_id)
   modelled_crossing_id as temp_id,
   archive_id as modelled_crossing_id,
   modelled_crossing_type,

@@ -134,6 +134,6 @@ Also output are several [reports](reports) summarizing crossing counts by variou
 
 The script completely re-runs the analysis and new data is created each time it is run - `modelled_crossing_id` will not be consistent between runs.
 
-If retaining existing `modelled_crossing_id` values is required, modify and use the script `sql/09_match_archived_crossings` to match ids against an existing table. Matching is done by finding nearest neighbouring points within 10m.
+If retaining existing `modelled_crossing_id` values is required, modify and use the script `sql/09_match_archived_crossings.sql` to match ids against an existing table. Matching is done by finding nearest neighbouring points within 10m.
 
-For published output, this matching script has been run (in a slightly modified form) to match `modelled_crossing_id` to `crossing_id` values from v.2.3.1 of the Fish Passage Technical Working Group model.
+For published output, this matching script has been run to match `modelled_crossing_id` to `crossing_id` values from v.2.3.1 of the Fish Passage Technical Working Group model.
