@@ -35,12 +35,12 @@ WITH matched_xings AS
   SELECT
     t1.modelled_crossing_id as modelled_crossing_id_del,
     t1.transport_line_id    as transport_line_id_del,
-    t1.ften_road_segment_id as ften_road_segment_id_del,
+    t1.ften_road_section_lines_id as ften_road_section_lines_id_del,
     t1.og_road_segment_permit_id as og_road_segment_permit_id_del,
     t1.og_petrlm_dev_rd_pre06_pub_id as og_petrlm_dev_rd_pre06_pub_id_del,
     nn.modelled_crossing_id as modelled_crossing_id_keep,
     nn.transport_line_id    as transport_line_id_keep,
-    nn.ften_road_segment_id as ften_road_segment_id_keep,
+    nn.ften_road_section_lines_id as ften_road_section_lines_id_keep,
     nn.og_road_segment_permit_id as og_road_segment_permit_id_keep,
     nn.og_petrlm_dev_rd_pre06_pub_id as og_petrlm_dev_rd_pre06_pub_id_keep
   FROM fish_passage.modelled_stream_crossings t1
@@ -48,7 +48,7 @@ WITH matched_xings AS
     (SELECT
      modelled_crossing_id,
          transport_line_id,
-         ften_road_segment_id,
+         ften_road_section_lines_id,
          og_road_segment_permit_id,
          og_petrlm_dev_rd_pre06_pub_id,
        ST_Distance(t1.geom, t2.geom) as dist
@@ -56,12 +56,12 @@ WITH matched_xings AS
      WHERE t2.transport_line_id IS NOT NULL
      ORDER BY t1.geom <-> t2.geom
      LIMIT 1) as nn
-  WHERE t1.ften_road_segment_id IS NOT NULL
+  WHERE t1.ften_road_section_lines_id IS NOT NULL
   AND nn.dist < 20
   ORDER BY t1.modelled_crossing_id
 )
 UPDATE fish_passage.modelled_stream_crossings x
-SET ften_road_segment_id = m.ften_road_segment_id_del
+SET ften_road_section_lines_id = m.ften_road_section_lines_id_del
 FROM matched_xings m
 WHERE x.modelled_crossing_id = m.modelled_crossing_id_keep;
 
@@ -72,12 +72,12 @@ WITH matched_xings AS
   SELECT
     t1.modelled_crossing_id as modelled_crossing_id_del,
     t1.transport_line_id    as transport_line_id_del,
-    t1.ften_road_segment_id as ften_road_segment_id_del,
+    t1.ften_road_section_lines_id as ften_road_section_lines_id_del,
     t1.og_road_segment_permit_id as og_road_segment_permit_id_del,
     t1.og_petrlm_dev_rd_pre06_pub_id as og_petrlm_dev_rd_pre06_pub_id_del,
     nn.modelled_crossing_id as modelled_crossing_id_keep,
     nn.transport_line_id    as transport_line_id_keep,
-    nn.ften_road_segment_id as ften_road_segment_id_keep,
+    nn.ften_road_section_lines_id as ften_road_section_lines_id_keep,
     nn.og_road_segment_permit_id as og_road_segment_permit_id_keep,
     nn.og_petrlm_dev_rd_pre06_pub_id as og_petrlm_dev_rd_pre06_pub_id_keep
   FROM fish_passage.modelled_stream_crossings t1
@@ -85,7 +85,7 @@ WITH matched_xings AS
     (SELECT
        modelled_crossing_id,
          transport_line_id,
-         ften_road_segment_id,
+         ften_road_section_lines_id,
          og_road_segment_permit_id,
          og_petrlm_dev_rd_pre06_pub_id,
        ST_Distance(t1.geom, t2.geom) as dist
@@ -93,7 +93,7 @@ WITH matched_xings AS
      WHERE t2.transport_line_id IS NOT NULL
      ORDER BY t1.geom <-> t2.geom
      LIMIT 1) as nn
-  WHERE t1.ften_road_segment_id IS NOT NULL
+  WHERE t1.ften_road_section_lines_id IS NOT NULL
   AND t1.transport_line_id IS NULL
   AND nn.dist < 20
   ORDER BY t1.modelled_crossing_id
@@ -111,12 +111,12 @@ WITH matched_xings AS
 SELECT
     t1.modelled_crossing_id as modelled_crossing_id_del,
     t1.transport_line_id    as transport_line_id_del,
-    t1.ften_road_segment_id as ften_road_segment_id_del,
+    t1.ften_road_section_lines_id as ften_road_section_lines_id_del,
     t1.og_road_segment_permit_id as og_road_segment_permit_id_del,
     t1.og_petrlm_dev_rd_pre06_pub_id as og_petrlm_dev_rd_pre06_pub_id_del,
     nn.modelled_crossing_id as modelled_crossing_id_keep,
     nn.transport_line_id    as transport_line_id_keep,
-    nn.ften_road_segment_id as ften_road_segment_id_keep,
+    nn.ften_road_section_lines_id as ften_road_section_lines_id_keep,
     nn.og_road_segment_permit_id as og_road_segment_permit_id_keep,
     nn.og_petrlm_dev_rd_pre06_pub_id as og_petrlm_dev_rd_pre06_pub_id_keep
   FROM fish_passage.modelled_stream_crossings t1
@@ -124,12 +124,12 @@ SELECT
       (SELECT
         modelled_crossing_id,
          transport_line_id,
-         ften_road_segment_id,
+         ften_road_section_lines_id,
          og_road_segment_permit_id,
          og_petrlm_dev_rd_pre06_pub_id,
          ST_Distance(t1.geom, t2.geom) as dist
        FROM fish_passage.modelled_stream_crossings t2
-       WHERE t2.transport_line_id IS NOT NULL OR t2.ften_road_segment_id IS NOT NULL
+       WHERE t2.transport_line_id IS NOT NULL OR t2.ften_road_section_lines_id IS NOT NULL
        ORDER BY t1.geom <-> t2.geom
        LIMIT 1) as nn
     WHERE t1.og_road_segment_permit_id IS NOT NULL
@@ -147,12 +147,12 @@ WITH matched_xings AS
 SELECT
     t1.modelled_crossing_id as modelled_crossing_id_del,
     t1.transport_line_id    as transport_line_id_del,
-    t1.ften_road_segment_id as ften_road_segment_id_del,
+    t1.ften_road_section_lines_id as ften_road_section_lines_id_del,
     t1.og_road_segment_permit_id as og_road_segment_permit_id_del,
     t1.og_petrlm_dev_rd_pre06_pub_id as og_petrlm_dev_rd_pre06_pub_id_del,
     nn.modelled_crossing_id as modelled_crossing_id_keep,
     nn.transport_line_id    as transport_line_id_keep,
-    nn.ften_road_segment_id as ften_road_segment_id_keep,
+    nn.ften_road_section_lines_id as ften_road_section_lines_id_keep,
     nn.og_road_segment_permit_id as og_road_segment_permit_id_keep,
     nn.og_petrlm_dev_rd_pre06_pub_id as og_petrlm_dev_rd_pre06_pub_id_keep
   FROM fish_passage.modelled_stream_crossings t1
@@ -160,17 +160,17 @@ SELECT
       (SELECT
          modelled_crossing_id,
          transport_line_id,
-         ften_road_segment_id,
+         ften_road_section_lines_id,
          og_road_segment_permit_id,
          og_petrlm_dev_rd_pre06_pub_id,
          ST_Distance(t1.geom, t2.geom) as dist
        FROM fish_passage.modelled_stream_crossings t2
-       WHERE t2.transport_line_id IS NOT NULL OR t2.ften_road_segment_id IS NOT NULL
+       WHERE t2.transport_line_id IS NOT NULL OR t2.ften_road_section_lines_id IS NOT NULL
        ORDER BY t1.geom <-> t2.geom
        LIMIT 1) as nn
     WHERE t1.og_road_segment_permit_id IS NOT NULL
     AND t1.transport_line_id IS NULL
-    AND t1.ften_road_segment_id IS NULL
+    AND t1.ften_road_section_lines_id IS NULL
     AND nn.dist < 20
     ORDER BY t1.modelled_crossing_id
 )
@@ -186,12 +186,12 @@ WITH matched_xings AS
 SELECT
     t1.modelled_crossing_id as modelled_crossing_id_del,
     t1.transport_line_id    as transport_line_id_del,
-    t1.ften_road_segment_id as ften_road_segment_id_del,
+    t1.ften_road_section_lines_id as ften_road_section_lines_id_del,
     t1.og_road_segment_permit_id as og_road_segment_permit_id_del,
     t1.og_petrlm_dev_rd_pre06_pub_id as og_petrlm_dev_rd_pre06_pub_id_del,
     nn.modelled_crossing_id as modelled_crossing_id_keep,
     nn.transport_line_id    as transport_line_id_keep,
-    nn.ften_road_segment_id as ften_road_segment_id_keep,
+    nn.ften_road_section_lines_id as ften_road_section_lines_id_keep,
     nn.og_road_segment_permit_id as og_road_segment_permit_id_keep,
     nn.og_petrlm_dev_rd_pre06_pub_id as og_petrlm_dev_rd_pre06_pub_id_keep
   FROM fish_passage.modelled_stream_crossings t1
@@ -199,14 +199,14 @@ SELECT
       (SELECT
          modelled_crossing_id,
          transport_line_id,
-         ften_road_segment_id,
+         ften_road_section_lines_id,
          og_road_segment_permit_id,
          og_petrlm_dev_rd_pre06_pub_id,
          ST_Distance(t1.geom, t2.geom) as dist
        FROM fish_passage.modelled_stream_crossings t2
        WHERE
          t2.transport_line_id IS NOT NULL
-         OR t2.ften_road_segment_id IS NOT NULL
+         OR t2.ften_road_section_lines_id IS NOT NULL
          OR t2.og_road_segment_permit_id IS NOT NULL
        ORDER BY t1.geom <-> t2.geom
        LIMIT 1) as nn
@@ -225,12 +225,12 @@ WITH matched_xings AS
 SELECT
     t1.modelled_crossing_id as modelled_crossing_id_del,
     t1.transport_line_id    as transport_line_id_del,
-    t1.ften_road_segment_id as ften_road_segment_id_del,
+    t1.ften_road_section_lines_id as ften_road_section_lines_id_del,
     t1.og_road_segment_permit_id as og_road_segment_permit_id_del,
     t1.og_petrlm_dev_rd_pre06_pub_id as og_petrlm_dev_rd_pre06_pub_id_del,
     nn.modelled_crossing_id as modelled_crossing_id_keep,
     nn.transport_line_id    as transport_line_id_keep,
-    nn.ften_road_segment_id as ften_road_segment_id_keep,
+    nn.ften_road_section_lines_id as ften_road_section_lines_id_keep,
     nn.og_road_segment_permit_id as og_road_segment_permit_id_keep,
     nn.og_petrlm_dev_rd_pre06_pub_id as og_petrlm_dev_rd_pre06_pub_id_keep
   FROM fish_passage.modelled_stream_crossings t1
@@ -238,20 +238,20 @@ SELECT
       (SELECT
          modelled_crossing_id,
          transport_line_id,
-         ften_road_segment_id,
+         ften_road_section_lines_id,
          og_road_segment_permit_id,
          og_petrlm_dev_rd_pre06_pub_id,
          ST_Distance(t1.geom, t2.geom) as dist
        FROM fish_passage.modelled_stream_crossings t2
        WHERE
          t2.transport_line_id IS NOT NULL
-         OR t2.ften_road_segment_id IS NOT NULL
+         OR t2.ften_road_section_lines_id IS NOT NULL
          OR t2.og_road_segment_permit_id IS NOT NULL
        ORDER BY t1.geom <-> t2.geom
        LIMIT 1) as nn
     WHERE t1.og_petrlm_dev_rd_pre06_pub_id IS NOT NULL
     AND t1.transport_line_id IS NULL
-    AND t1.ften_road_segment_id IS NULL
+    AND t1.ften_road_section_lines_id IS NULL
     AND t1.og_road_segment_permit_id IS NULL
     AND nn.dist < 20
     ORDER BY t1.modelled_crossing_id

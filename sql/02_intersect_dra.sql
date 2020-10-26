@@ -16,7 +16,7 @@ roads AS
     transport_line_type_code,
     geom
   FROM whse_basemapping.transport_line r
-  WHERE transport_line_type_code NOT IN ('F','FP','FR','T','TD','TR','TS','RP','RWA') -- exclude trails and ferry/water
+  WHERE transport_line_type_code NOT IN ('F','FP','FR','T','TR','TS','RP','RWA')      -- exclude trails other than demographic and all ferry/water
   AND transport_line_surface_code != 'D'                                              -- exclude decomissioned roads
   AND COALESCE(transport_line_structure_code, '') != 'T'                              -- exclude tunnels
 ),

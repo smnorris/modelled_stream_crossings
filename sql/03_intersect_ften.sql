@@ -3,7 +3,7 @@ WITH streams AS
   SELECT s.*
   FROM whse_basemapping.fwa_stream_networks_sp s
   WHERE s.watershed_group_code = :wsg
-  AND s.fwa_watershed_code NOT LIKE '999%' -- exclude streams that are not part of the network
+  AND s.fwa_watershed_code NOT LIKE '999%'   -- exclude streams that are not part of the network
   AND s.edge_type NOT IN (1410, 1425)        -- exclude subsurface flow
   AND s.localcode_ltree IS NOT NULL          -- exclude streams with no local code
 ),
@@ -12,9 +12,9 @@ roads AS
 (
    -- FTEN
   SELECT
-    id AS ften_road_segment_id,  -- this id is supplied by the WFS, may want to choose something that be linked back to BCGW?
+    id AS ften_road_section_lines_id,  -- this id is supplied by the WFS, may want to choose something that be linked back to BCGW?
     geom
-  FROM whse_forest_tenure.ften_road_segment_lines_svw r
+  FROM whse_forest_tenure.ften_road_section_lines_svw r
   WHERE life_cycle_status_code not in ('RETIRED', 'PENDING')  -- active tenures only
 ),
 
@@ -22,7 +22,7 @@ roads AS
 intersections AS
 (
   SELECT
-    r.ften_road_segment_id,
+    r.ften_road_section_lines_id,
     s.linear_feature_id,
     s.blue_line_key,
     s.wscode_ltree,
@@ -47,7 +47,7 @@ clusters AS
 (
   -- 12.5m clustering for FTEN roads
   SELECT
-    max(ften_road_segment_id) AS ften_road_segment_id,
+    max(ften_road_section_lines_id) AS ften_road_section_lines_id,
     linear_feature_id,
     blue_line_key,
     wscode_ltree,
@@ -75,7 +75,7 @@ intersections_measures AS
 
 -- finally, generate the point from the measure.
 INSERT INTO fish_passage.modelled_stream_crossings
-  (ften_road_segment_id,
+  (ften_road_section_lines_id,
   linear_feature_id,
   blue_line_key,
   downstream_route_measure,
@@ -84,7 +84,7 @@ INSERT INTO fish_passage.modelled_stream_crossings
   watershed_group_code,
   geom)
 SELECT
-  ften_road_segment_id,
+  ften_road_section_lines_id,
   linear_feature_id,
   blue_line_key,
   downstream_route_measure_pt as downstream_route_measure,

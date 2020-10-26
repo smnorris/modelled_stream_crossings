@@ -20,7 +20,7 @@ Road and railway features are downloaded from DataBC. Features used to generate 
 
 | Source         | Query |
 | ------------- | ------------- |
-| [Digital Road Atlas (DRA)](https://catalogue.data.gov.bc.ca/dataset/digital-road-atlas-dra-master-partially-attributed-roads)  | `transport_line_type_code NOT IN ('F','FP','FR','T','TD','TR','TS','RP','RWA') AND transport_line_surface_code != 'D' AND transport_line_structure_code != 'T' ` |
+| [Digital Road Atlas (DRA)](https://catalogue.data.gov.bc.ca/dataset/digital-road-atlas-dra-master-partially-attributed-roads)  | `transport_line_type_code NOT IN ('F','FP','FR','T','TR','TS','RP','RWA') AND transport_line_surface_code != 'D' AND transport_line_structure_code != 'T' ` |
 | [Forest Tenure Roads](https://catalogue.data.gov.bc.ca/dataset/forest-tenure-road-section-lines)  | `life_cycle_status_code NOT IN ('RETIRED', 'PENDING')` |
 | [OGC Road Segment Permits](https://catalogue.data.gov.bc.ca/dataset/oil-and-gas-commission-road-segment-permits)  | `status = 'Approved' AND road_type_desc != 'Snow Ice Road'` |
 | [OGC Development Roads pre-2006](https://catalogue.data.gov.bc.ca/dataset/ogc-petroleum-development-roads-pre-2006-public-version) | `petrlm_development_road_type != 'WINT'` |
@@ -104,7 +104,7 @@ Output table is `fish_passage.modelled_stream_crossings`:
  modelled_crossing_type        | character varying(5)   |           |          |
  modelled_crossing_type_source | text[]                 |           |          |
  transport_line_id             | integer                |           |          |
- ften_road_segment_id          | text                   |           |          |
+ ften_road_section_line_id     | text                   |           |          |
  og_road_segment_permit_id     | integer                |           |          |
  og_petrlm_dev_rd_pre06_pub_id | integer                |           |          |
  railway_track_id              | integer                |           |          |
@@ -118,7 +118,7 @@ Output table is `fish_passage.modelled_stream_crossings`:
 Indexes:
     "modelled_stream_crossings_pkey" PRIMARY KEY, btree (modelled_crossing_id)
     "modelled_stream_crossings_blue_line_key_idx" btree (blue_line_key)
-    "modelled_stream_crossings_ften_road_segment_id_idx" btree (ften_road_segment_id)
+    "modelled_stream_crossings_ften_road_section_line_id_idx" btree (ften_road_section_line_id)
     "modelled_stream_crossings_geom_idx" gist (geom)
     "modelled_stream_crossings_linear_feature_id_idx" btree (linear_feature_id)
     "modelled_stream_crossings_og_petrlm_dev_rd_pre06_pub_id_idx" btree (og_petrlm_dev_rd_pre06_pub_id)

@@ -8,7 +8,7 @@ CREATE TABLE fish_passage.modelled_stream_crossings
   modelled_crossing_type character varying(5),
   modelled_crossing_type_source text[],
   transport_line_id integer,
-  ften_road_segment_id text,
+  ften_road_section_lines_id text,
   og_road_segment_permit_id integer,
   og_petrlm_dev_rd_pre06_pub_id integer,
   railway_track_id integer,
