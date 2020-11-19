@@ -1,5 +1,7 @@
 # modelled_stream_crossings
 
+** moved to https://github.com/smnorris/bcfishpass/tree/main/01_prep/01_modelled_stream_crossings **
+
 Generate potential locations of road/railway stream crossings and associated structures in British Columbia.
 
 In addition to generating the intersection points of roads/railways and streams, this tool attempts to:
